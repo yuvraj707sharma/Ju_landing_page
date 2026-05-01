@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JECRC University — Build Your World</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #C8102E;
+      --navy: #0D1B2A;
+      --cream: oklch(98% 0.006 60);
+      --gray: oklch(55% 0.008 250);
+      --light-gray: oklch(93% 0.004 250);
+      --nav-height: 76px;
+      --shadow-soft: 0 12px 30px rgba(13, 27, 42, 0.08);
+      --font-sans: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif;
+      --font-serif: 'Playfair Display', 'Times New Roman', serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--cream);
+      color: var(--navy);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--nav-height) + 16px);
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-height);
+      padding: 0 48px;
+      background: rgba(253, 251, 248, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(13,27,42,0.07);
+      box-shadow: var(--shadow-soft);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo-shield {
+      width: 40px;
+      height: 44px;
+    }
+
+    .nav-logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .nav-logo-text .brand {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--navy);
+    }
+
+    .nav-logo-text .brand span {
+      color: var(--red);
+    }
+
+    .nav-logo-text .tagline {
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-top: 3px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-links a {
+      position: relative;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      color: var(--navy);
+      text-decoration: none;
+      padding: 6px 0;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 2px;
+      background: var(--red);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s ease;
+    }
+
+    .nav-links a:hover { opacity: 1; }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    .nav-cta {
+      background: var(--red);
+      color: #fff !important;
+      opacity: 1 !important;
+      padding: 10px 22px;
+      border-radius: 4px;
+      font-weight: 700 !important;
+      letter-spacing: 0.3px;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta::after { display: none; }
+
+    .nav-cta:hover { background: #a50d24 !important; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr;
+      align-items: stretch;
+      overflow: hidden;
+      padding-top: var(--nav-height);
+    }
+
+    .hero-bg-line {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .hero-bg-line::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      background: rgba(13,27,42,0.06);
+    }
+
+    /* Admission badge */
+    .admission-badge {
+      position: absolute;
+      top: calc(var(--nav-height) + 32px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 8px 24px;
+      border-radius: 2px;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    /* Left column */
+    .hero-left {
+      grid-column: 1;
+      padding: 0 48px 80px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(42px, 5vw, 72px);
+      line-height: 1.05;
+      color: var(--navy);
+      font-style: italic;
+      letter-spacing: -0.4px;
+    }
+
+    .hero-headline strong {
+      font-style: normal;
+      color: var(--red);
+      display: block;
+      font-size: clamp(52px, 6.5vw, 90px);
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--gray);
+      max-width: 300px;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-num {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .stat-divider {
+      width: 32px;
+      height: 1px;
+      background: var(--red);
+      margin-top: 6px;
+    }
+
+    /* Center — Vikrant */
+    .hero-center {
+      grid-column: 2;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .vikrant-img {
+      width: 100%;
+      height: 100%;
+      max-width: 520px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 0 80px rgba(200,16,46,0.08));
+    }
+
+    .hero-red-bar {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 80px;
+      background: var(--red);
+      opacity: 0.3;
+    }
+
+    /* Right column */
+    .hero-right {
+      grid-column: 3;
+      padding: 0 48px 80px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .programs-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    .programs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      list-style: none;
+    }
+
+    .programs-list li {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--navy);
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(13,27,42,0.08);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: color 0.2s;
+      opacity: 0.85;
+    }
+
+    .programs-list li:first-child { border-top: 1px solid rgba(13,27,42,0.08); }
+
+    .programs-list li:hover { color: var(--red); opacity: 1; }
+
+    .programs-list li .arrow {
+      font-size: 12px;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .programs-list li:hover .arrow { opacity: 1; transform: translateX(0); }
+
+    .apply-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, transform 0.15s;
+      align-self: flex-start;
+    }
+
+    .apply-btn:hover {
+      background: var(--red);
+      transform: translateY(-1px);
+    }
+
+    .apply-btn .btn-arrow {
+      font-size: 16px;
+      transition: transform 0.2s;
+    }
+
+    .apply-btn:hover .btn-arrow { transform: translateX(4px); }
+
+    /* ── TICKER / MARQUEE ── */
+    .ticker {
+      background: var(--navy);
+      color: #fff;
+      padding: 14px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 0;
+      animation: ticker-scroll 28s linear infinite;
+      width: max-content;
+    }
+
+    .ticker-item {
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 0 48px;
+      opacity: 0.7;
+    }
+
+    .ticker-item span {
+      color: var(--red);
+      margin-right: 48px;
+    }
+
+    @keyframes ticker-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── INFO STRIP ── */
+    .info-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-top: 1px solid rgba(13,27,42,0.08);
+    }
+
+    .info-cell {
+      padding: 40px 48px;
+      border-right: 1px solid rgba(13,27,42,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .info-cell:last-child { border-right: none; }
+
+    .info-cell-label {
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--gray);
+    }
+
+    .info-cell-value {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--navy);
+      line-height: 1.5;
+    }
+
+    .info-cell-value a {
+      color: var(--red);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .info-cell-value a:hover { text-decoration: underline; }
+
+    /* ── NAAC BADGE ── */
+    .naac-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      padding: 32px 48px;
+      border-top: 1px solid rgba(13,27,42,0.08);
+      background: var(--light-gray);
+    }
+
+    .naac-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .naac-badge-box {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--navy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: 0;
+    }
+
+    .naac-grade {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--navy);
+      font-style: italic;
+    }
+
+    .dot-sep {
+      width: 4px;
+      height: 4px;
+      background: var(--red);
+      border-radius: 50%;
+    }
+
+    /* ── SECTION COMMONS ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 4vw, 60px);
+      line-height: 1.08;
+      color: var(--navy);
+      letter-spacing: -0.3px;
+    }
+
+    .section-title em { font-style: italic; color: var(--red); }
+
+    /* ── COURSES SECTION ── */
+    .courses-section {
+      padding: 120px 48px;
+      background: var(--cream);
+    }
+
+    .courses-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 72px;
+      gap: 32px;
+    }
+
+    .courses-header-left { max-width: 540px; }
+
+    .courses-header-desc {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--gray);
+      line-height: 1.75;
+      margin-top: 20px;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: rgba(13,27,42,0.08);
+    }
+
+    .course-card {
+      background: var(--cream);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .course-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--red);
+      transition: width 0.3s ease;
+    }
+
+    .course-card:hover { background: #fff; }
+    .course-card:hover::before { width: 100%; }
+
+    .course-icon {
+      width: 44px;
+      height: 44px;
+      border: 1.5px solid rgba(13,27,42,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .course-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    .course-degrees {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .degree-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: var(--light-gray);
+      color: var(--gray);
+      padding: 4px 10px;
+      border-radius: 2px;
+    }
+
+    .course-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--gray);
+      line-height: 1.65;
+    }
+
+    .course-link {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--red);
+      text-decoration: none;
+      margin-top: auto;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .course-card:hover .course-link { opacity: 1; }
+
+    /* ── WHY JECRC ── */
+    .why-section {
+      background: var(--navy);
+      color: #fff;
+      padding: 120px 48px;
+    }
+
+    .why-section .section-label { color: rgba(200,16,46,0.9); }
+    .why-section .section-title { color: #fff; }
+    .why-section .section-title em { color: rgba(200,16,46,0.9); }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      margin-top: 72px;
+      align-items: start;
+    }
+
+    .why-left { display: flex; flex-direction: column; gap: 0; }
+
+    .why-item {
+      padding: 32px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .why-item:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+
+    .why-num {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-style: italic;
+      color: var(--red);
+      line-height: 1;
+      padding-top: 2px;
+    }
+
+    .why-item-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .why-item-desc {
+      font-size: 15px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+    }
+
+    .why-right {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      position: sticky;
+      top: 120px;
+    }
+
+    .big-stat-block {
+      padding: 48px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .big-stat-num {
+      font-size: 80px;
+      font-weight: 900;
+      letter-spacing: -4px;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .big-stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .why-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .why-stat-cell {
+      background: var(--navy);
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .why-stat-val {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: #fff;
+    }
+
+    .why-stat-lbl {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* ── PLACEMENTS ── */
+    .placements-section {
+      padding: 120px 48px;
+      background: var(--cream);
+    }
+
+    .placements-header {
+      margin-bottom: 64px;
+    }
+
+    .company-logos-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 2px;
+      background: rgba(13,27,42,0.08);
+      margin-top: 48px;
+    }
+
+    .company-logo-cell {
+      background: var(--cream);
+      padding: 32px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--gray);
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .company-logo-cell:hover { background: #fff; color: var(--navy); }
+
+    .placement-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      background: rgba(13,27,42,0.08);
+      margin-top: 2px;
+    }
+
+    .placement-stat-cell {
+      background: var(--cream);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .placement-stat-val {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .placement-stat-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ── SCHOLARSHIP ── */
+    .scholarship-section {
+      background: var(--light-gray);
+      padding: 120px 48px;
+    }
+
+    .scholarship-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      margin-top: 64px;
+      align-items: start;
+    }
+
+    .scholarship-table {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid rgba(13,27,42,0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    .sch-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid rgba(13,27,42,0.08);
+    }
+
+    .sch-row:last-child { border-bottom: none; }
+
+    .sch-header { background: var(--navy); }
+
+    .sch-cell {
+      padding: 14px 20px;
+      font-size: 13px;
+      color: var(--navy);
+    }
+
+    .sch-header .sch-cell {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .sch-highlight { color: var(--red); font-weight: 700; }
+
+    .sch-note {
+      font-size: 12px;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-top: 20px;
+    }
+
+    .fee-card {
+      background: var(--cream);
+      border: 1px solid rgba(13,27,42,0.08);
+      border-radius: 4px;
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .fee-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(13,27,42,0.07);
+      font-size: 14px;
+    }
+
+    .fee-item:last-child { border-bottom: none; }
+
+    .fee-label { color: var(--gray); }
+    .fee-val { font-weight: 700; color: var(--navy); }
+
+    /* ── FAQ ── */
+    .faq-section {
+      padding: 120px 48px;
+      background: var(--cream);
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: rgba(13,27,42,0.08);
+      margin-top: 64px;
+    }
+
+    .faq-item {
+      background: var(--cream);
+      padding: 36px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .faq-item:hover { background: #fff; }
+
+    .faq-q {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .faq-toggle {
+      font-size: 20px;
+      color: var(--red);
+      line-height: 1;
+      flex-shrink: 0;
+      font-weight: 300;
+      transition: transform 0.2s;
+    }
+
+    .faq-item.open .faq-toggle { transform: rotate(45deg); }
+
+    .faq-a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--gray);
+      line-height: 1.75;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-item.open .faq-a { max-height: 200px; }
+
+    /* ── FINAL CTA ── */
+    .cta-section {
+      background: var(--red);
+      padding: 100px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 48px;
+    }
+
+    .cta-left { max-width: 600px; }
+
+    .cta-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 4vw, 58px);
+      color: #fff;
+      line-height: 1.08;
+    }
+
+    .cta-sub {
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.7;
+      margin-top: 16px;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .cta-btn-primary {
+      background: #fff;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 18px 40px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+
+    .cta-btn-primary:hover { background: var(--navy); color: #fff; transform: translateY(-1px); }
+
+    .cta-contact {
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    /* ── FOOTER NAV ── */
+    .footer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      border-top: 1px solid rgba(13,27,42,0.08);
+      background: var(--navy);
+    }
+
+    .footer-bar span {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.3px;
+    }
+
+    .footer-bar a {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-bar a:hover { color: #fff; }
+
+    .footer-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    /* ── FORM MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(13,27,42,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-card {
+      background: var(--cream);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 520px;
+      padding: 48px;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .modal-overlay.open .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none; border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--gray);
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-style: italic;
+      color: var(--navy);
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .modal-subtitle {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .form-group input,
+    .form-group select {
+      border: 1px solid rgba(13,27,42,0.15);
+      background: #fff;
+      border-radius: 4px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-family: var(--font-sans);
+      color: var(--navy);
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--red);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-submit {
+      width: 100%;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 16px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+
+    .form-submit:hover { background: #a50d24; }
+
+    .form-disclaimer {
+      font-size: 11px;
+      color: var(--gray);
+      margin-top: 12px;
+      line-height: 1.5;
+      text-align: center;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <svg class="nav-logo-shield" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2L38 10V24C38 33.6 30 41.2 20 43C10 41.2 2 33.6 2 24V10L20 2Z" fill="#C8102E" />
+      <text x="20" y="29" text-anchor="middle" fill="white" font-size="13" font-weight="900" font-family="DM Sans, sans-serif">JU</text>
+    </svg>
+    <div class="nav-logo-text">
+      <div class="brand">JECRC<span>™</span></div>
+      <div class="tagline">Build Your World · Jaipur</div>
+    </div>
+  </a>
+
+  <nav class="nav-links">
+    <a href="#programs">Programs</a>
+    <a href="#placements">Placements</a>
+    <a href="#scholarships">Scholarships</a>
+    <a href="#faq">For Parents</a>
+    <a href="#" class="nav-cta" id="nav-apply">Apply Now</a>
+  </nav>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-line"></div>
+
+  <div class="admission-badge">Admissions Open — 2026–2027</div>
+
+  <!-- LEFT -->
+  <div class="hero-left">
+    <div>
+      <div class="hero-headline">
+        Your world<br />starts
+        <strong>here.</strong>
+      </div>
+      <p class="hero-sub" style="margin-top:24px;">25,000+ students. 205 recruiters. Jaipur's most career-focused university — where your first job doesn't wait for luck.</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">34K+</div>
+        <div class="stat-label">Alumni · 35 Countries</div>
+        <div class="stat-divider"></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">33 LPA</div>
+        <div class="stat-label">Highest Package 2025</div>
+        <div class="stat-divider"></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">2104+</div>
+        <div class="stat-label">Placement offers this year</div>
+        <div class="stat-divider"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: Vikrant -->
+  <div class="hero-center">
+    <img
+      class="vikrant-img"
+      src="uploads/WhatsApp Image 2026-03-24 at 4.30.50 PM.jpeg"
+      alt="Vikrant Massey at JECRC University"
+    />
+    <div class="hero-red-bar"></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="hero-right">
+    <div>
+      <div class="programs-label">Programs</div>
+    </div>
+    <ul class="programs-list">
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-engineering-technology/'">Engineering <span class="arrow">→</span></li>
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-computer-applications/'">Computer Applications <span class="arrow">→</span></li>
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-business/'">Business Studies <span class="arrow">→</span></li>
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-sciences/'">Sciences <span class="arrow">→</span></li>
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-design/'">Design <span class="arrow">→</span></li>
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-hospitality/'">Hospitality <span class="arrow">→</span></li>
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-law/'">Law <span class="arrow">→</span></li>
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-mass-communication/'">Mass Communication <span class="arrow">→</span></li>
+      <li onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-business/'">MBA for Working Professionals <span class="arrow">→</span></li>
+    </ul>
+    <a href="#" class="apply-btn" id="hero-apply">
+      Apply for 2026–27 <span class="btn-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner" id="ticker-inner"></div>
+</div>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="info-cell">
+    <div class="info-cell-label">Admissions Helpline</div>
+    <div class="info-cell-value">
+      1800-120-5616 (Toll Free)<br />
+      WhatsApp: +91 77280 01234<br />
+      +91-9116642285
+    </div>
+  </div>
+  <div class="info-cell">
+    <div class="info-cell-label">Campus Location</div>
+    <div class="info-cell-value">
+      Plot IS-2036–2039, Sitapura Extension<br />
+      Jaipur, Rajasthan – 303905<br />
+      <a href="https://jecrcuniversity.edu.in" target="_blank">jecrcuniversity.edu.in</a>
+    </div>
+  </div>
+  <div class="info-cell">
+    <div class="info-cell-label">Fee Starting From</div>
+    <div class="info-cell-value">
+      ₹1.75L / year · No hidden charges<br />
+      Scholarships up to 20% waiver<br />
+      <a href="#scholarships">Check eligibility →</a>
+    </div>
+  </div>
+</div>
+
+<!-- COURSES SECTION -->
+<section class="courses-section" id="programs">
+  <div class="courses-header">
+    <div class="courses-header-left">
+      <div class="section-label">Academic Programs</div>
+      <h2 class="section-title">Find your<br /><em>discipline.</em></h2>
+      <p class="courses-header-desc">13 schools. Hundreds of specialisations. One campus where every ambition finds its path — from cutting-edge engineering to the creative arts.</p>
+    </div>
+    <a href="#" class="apply-btn" id="courses-apply">
+      Apply Now <span class="btn-arrow">→</span>
+    </a>
+  </div>
+
+  <div class="courses-grid">
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-engineering-technology/'">
+      <div class="course-icon">⚙</div>
+      <div class="course-name">Engineering &amp; Technology</div>
+      <div class="course-degrees">
+        <span class="degree-tag">B.Tech</span>
+        <span class="degree-tag">M.Tech</span>
+        <span class="degree-tag">Ph.D</span>
+      </div>
+      <p class="course-desc">AI &amp; ML (with IBM/Xebia), Cyber Security (EC-Council USA), Cloud Computing (Microsoft/AWS), Robotics &amp; Automation. 165+ specializations.</p>
+      <div style="font-size:12px; font-weight:700; color:var(--red); margin-top:4px;">↑ Avg. 8–12 LPA</div>
+      <a href="https://jecrcuniversity.edu.in/program/school-of-engineering-technology/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-computer-applications/'">
+      <div class="course-icon">💻</div>
+      <div class="course-name">Computer Applications</div>
+      <div class="course-degrees">
+        <span class="degree-tag">BCA</span>
+        <span class="degree-tag">MCA</span>
+      </div>
+      <p class="course-desc">Software development, cloud computing, cybersecurity and full-stack technologies. Industry-certified curriculum with placement support.</p>
+      <div style="font-size:12px; font-weight:700; color:var(--red); margin-top:4px;">↑ Avg. 7–10 LPA</div>
+      <a href="https://jecrcuniversity.edu.in/program/school-of-computer-applications/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-business/'">
+      <div class="course-icon">📊</div>
+      <div class="course-name">Business Studies</div>
+      <div class="course-degrees">
+        <span class="degree-tag">BBA</span>
+        <span class="degree-tag">MBA</span>
+        <span class="degree-tag">Ph.D</span>
+      </div>
+      <p class="course-desc">FinTech &amp; Business (with Zell · Deloitte · Imarticus), Marketing, Finance, HR, International Business, Entrepreneurship.</p>
+      <div style="font-size:12px; font-weight:700; color:var(--red); margin-top:4px;">↑ Avg. 8–16 LPA</div>
+      <a href="https://jecrcuniversity.edu.in/program/jaipur-school-of-business/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-sciences/'">
+      <div class="course-icon">🔬</div>
+      <div class="course-name">Sciences</div>
+      <div class="course-degrees">
+        <span class="degree-tag">B.Sc</span>
+        <span class="degree-tag">M.Sc</span>
+        <span class="degree-tag">Ph.D</span>
+      </div>
+      <p class="course-desc">Physics, Chemistry, Mathematics, Biotechnology, Microbiology. Research-first approach with state-of-the-art labs.</p>
+      <a href="https://jecrcuniversity.edu.in/program/school-of-sciences/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-design/'">
+      <div class="course-icon">✏</div>
+      <div class="course-name">Design</div>
+      <div class="course-degrees">
+        <span class="degree-tag">B.Des</span>
+        <span class="degree-tag">M.Des</span>
+      </div>
+      <p class="course-desc">Interior · Fashion · Game Art · Jewellery Design. Studio-led, portfolio-driven. Industry mentors from top design houses.</p>
+      <div style="font-size:12px; font-weight:700; color:var(--red); margin-top:4px;">↑ Avg. 4–8 LPA</div>
+      <a href="https://jecrcuniversity.edu.in/program/jaipur-school-of-design/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-hospitality/'">
+      <div class="course-icon">🏨</div>
+      <div class="course-name">Hospitality</div>
+      <div class="course-degrees">
+        <span class="degree-tag">B.Sc HM</span>
+        <span class="degree-tag">M.Sc HM</span>
+      </div>
+      <p class="course-desc">Hotel Management, Food &amp; Beverage, Tourism. Industry tie-ups with leading hotel groups for live training.</p>
+      <a href="https://jecrcuniversity.edu.in/program/school-of-hospitality/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-law/'">
+      <div class="course-icon">⚖</div>
+      <div class="course-name">Law</div>
+      <div class="course-degrees">
+        <span class="degree-tag">BA LLB</span>
+        <span class="degree-tag">BBA LLB</span>
+        <span class="degree-tag">LLM</span>
+      </div>
+      <p class="course-desc">5-Year Integrated Law. Corporate, Criminal, Constitutional Law, Intellectual Property. Moot court training from year one.</p>
+      <div style="font-size:12px; font-weight:700; color:var(--red); margin-top:4px;">↑ Avg. 5–10 LPA</div>
+      <a href="https://jecrcuniversity.edu.in/program/school-of-law/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-mass-communication/'">
+      <div class="course-icon">📡</div>
+      <div class="course-name">Mass Communication</div>
+      <div class="course-degrees">
+        <span class="degree-tag">BAJMC</span>
+        <span class="degree-tag">MAJMC</span>
+      </div>
+      <p class="course-desc">Journalism, Public Relations, Advertising, Digital Media, Film &amp; TV Production. Fully equipped media labs.</p>
+      <a href="https://jecrcuniversity.edu.in/program/jaipur-school-of-mass-communication/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-humanities-social-sciences/'">
+      <div class="course-icon">🌐</div>
+      <div class="course-name">Humanities &amp; Social Sciences</div>
+      <div class="course-degrees">
+        <span class="degree-tag">BA</span>
+        <span class="degree-tag">MA</span>
+        <span class="degree-tag">Ph.D</span>
+      </div>
+      <p class="course-desc">Psychology, Sociology, Political Science, History, English. Critical thinking and research at the core.</p>
+      <a href="https://jecrcuniversity.edu.in/program/school-of-humanities-social-sciences/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-economics/'">
+      <div class="course-icon">📈</div>
+      <div class="course-name">Economics</div>
+      <div class="course-degrees">
+        <span class="degree-tag">B.A. Eco</span>
+        <span class="degree-tag">M.A. Eco</span>
+      </div>
+      <p class="course-desc">Macro &amp; Micro Economics, Econometrics, Development Economics. Strong analytical foundation for finance and policy careers.</p>
+      <a href="https://jecrcuniversity.edu.in/program/jaipur-school-of-economics/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/school-of-humanities-social-sciences/'">
+      <div class="course-icon">🗣</div>
+      <div class="course-name">Foreign Languages</div>
+      <div class="course-degrees">
+        <span class="degree-tag">Certificate</span>
+        <span class="degree-tag">Diploma</span>
+        <span class="degree-tag">B.A.</span>
+      </div>
+      <p class="course-desc">French, German, Spanish, Japanese, Chinese. Language fluency as a career multiplier for global professionals.</p>
+      <a href="https://jecrcuniversity.edu.in/program/school-of-humanities-social-sciences/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+    <div class="course-card" onclick="window.location.href='https://jecrcuniversity.edu.in/program/jaipur-school-of-business/'">
+      <div class="course-icon">🎓</div>
+      <div class="course-name">MBA — Working Professionals</div>
+      <div class="course-degrees">
+        <span class="degree-tag">MBA</span>
+        <span class="degree-tag">Weekend Batch</span>
+      </div>
+      <p class="course-desc">Designed for professionals without a career break. Weekend classes, flexible scheduling, industry-relevant curriculum.</p>
+      <a href="https://jecrcuniversity.edu.in/program/jaipur-school-of-business/" class="course-link" onclick="event.stopPropagation()">Explore →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY JECRC -->
+<section class="why-section" id="about">
+  <div class="section-label">Why JECRC</div>
+  <h2 class="section-title">Built for the<br /><em>ambitious.</em></h2>
+
+  <div class="why-grid">
+    <div class="why-left">
+      <div class="why-item">
+        <div class="why-num">01</div>
+        <div>
+          <div class="why-item-title">Research-Led Teaching</div>
+          <p class="why-item-desc">Faculty from IITs, IIMs, and top global universities. Our classrooms are informed by active research, not just textbooks.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">02</div>
+        <div>
+          <div class="why-item-title">Industry Integration</div>
+          <p class="why-item-desc">500+ industry partners. Live projects, internships and placements embedded into every program from semester one.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">03</div>
+        <div>
+          <div class="why-item-title">Global Exposure</div>
+          <p class="why-item-desc">Student exchange programs, international collaborations, and a 35-country alumni network open doors around the world.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">04</div>
+        <div>
+          <div class="why-item-title">200-Acre Campus</div>
+          <p class="why-item-desc">State-of-the-art labs, innovation centres, sports facilities, hostels, and a buzzing startup ecosystem — all in one place.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">05</div>
+        <div>
+          <div class="why-item-title">NAAC A+ Accredited</div>
+          <p class="why-item-desc">Recognised by the UGC and rated among the highest-quality private universities in Rajasthan by the National Assessment body.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="why-right">
+      <div class="big-stat-block">
+        <div class="big-stat-num">34K+</div>
+        <div class="big-stat-label">Alumni in 35 Countries</div>
+      </div>
+      <div class="why-stats-row">
+        <div class="why-stat-cell">
+          <div class="why-stat-val">205</div>
+          <div class="why-stat-lbl">Hiring Partners</div>
+        </div>
+        <div class="why-stat-cell">
+          <div class="why-stat-val">153</div>
+          <div class="why-stat-lbl">Patents Filed</div>
+        </div>
+        <div class="why-stat-cell">
+          <div class="why-stat-val">27</div>
+          <div class="why-stat-lbl">Yrs Legacy</div>
+        </div>
+        <div class="why-stat-cell">
+          <div class="why-stat-val">165+</div>
+          <div class="why-stat-lbl">Specializations</div>
+        </div>
+      </div>
+      <div style="border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:36px; display:flex; flex-direction:column; gap:16px;">
+        <div style="font-family:var(--font-serif); font-style:italic; font-size:18px; color:#fff; line-height:1.5;">"The best decisions I made were the ones that scared me a little. Choosing the right college is one of them."</div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img src="uploads/WhatsApp Image 2026-03-24 at 4.30.50 PM.jpeg" style="width:44px; height:44px; border-radius:50%; object-fit:cover; object-position:center top;" alt="Vikrant Massey" />
+          <div>
+            <div style="font-size:13px; font-weight:700; color:#fff;">Vikrant Massey</div>
+            <div style="font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.4);">Actor · Brand Ambassador</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLACEMENTS -->
+<section class="placements-section" id="placements">
+  <div class="placements-header">
+    <div class="section-label">Placements &amp; Careers</div>
+    <h2 class="section-title">Numbers that matter<br /><em>to parents.</em></h2>
+  </div>
+
+  <div class="placement-stats-row">
+    <div class="placement-stat-cell">
+      <div class="placement-stat-val">33 LPA</div>
+      <div class="placement-stat-lbl">Highest Package 2025–26</div>
+    </div>
+    <div class="placement-stat-cell">
+      <div class="placement-stat-val">2104+</div>
+      <div class="placement-stat-lbl">Offers in 230 Days</div>
+    </div>
+    <div class="placement-stat-cell">
+      <div class="placement-stat-val">205</div>
+      <div class="placement-stat-lbl">Companies Visited</div>
+    </div>
+    <div class="placement-stat-cell">
+      <div class="placement-stat-val">10.7 LPA</div>
+      <div class="placement-stat-lbl">Top 30% Average CTC</div>
+    </div>
+  </div>
+
+  <!-- 5-year trend -->
+  <div style="margin-top:2px; background:rgba(13,27,42,0.08); display:grid; grid-template-columns:1fr 1fr; gap:2px;">
+    <div style="background:var(--cream); padding:40px 36px;">
+      <div class="section-label" style="margin-bottom:28px;">5-Year Placement Trend</div>
+      <div style="display:flex; flex-direction:column; gap:0;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(13,27,42,0.08);">
+          <span style="font-size:13px; font-weight:600; color:var(--gray); letter-spacing:1px;">2025–26</span>
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="height:6px; background:var(--red); border-radius:2px; width:180px;"></div>
+            <span style="font-size:17px; font-weight:900; color:var(--navy); min-width:56px; text-align:right;">2104+</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(13,27,42,0.08);">
+          <span style="font-size:13px; font-weight:600; color:var(--gray); letter-spacing:1px;">2024–25</span>
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="height:6px; background:var(--red); border-radius:2px; width:190px;"></div>
+            <span style="font-size:17px; font-weight:900; color:var(--navy); min-width:56px; text-align:right;">2230+</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(13,27,42,0.08);">
+          <span style="font-size:13px; font-weight:600; color:var(--gray); letter-spacing:1px;">2023–24</span>
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="height:6px; background:var(--red); border-radius:2px; width:140px;"></div>
+            <span style="font-size:17px; font-weight:900; color:var(--navy); min-width:56px; text-align:right;">1628+</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0;">
+          <span style="font-size:13px; font-weight:600; color:var(--gray); letter-spacing:1px;">2022–23</span>
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="height:6px; background:rgba(200,16,46,0.3); border-radius:2px; width:120px;"></div>
+            <span style="font-size:17px; font-weight:900; color:var(--navy); min-width:56px; text-align:right;">~1400</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:24px; font-size:12px; font-weight:700; letter-spacing:1px; color:var(--gray);">12,000+ total placements over 5 years</div>
+    </div>
+    <div style="background:var(--cream); padding:40px 36px;">
+      <div class="section-label" style="margin-bottom:28px;">Package Breakdown — 2025–26</div>
+      <div style="display:flex; flex-direction:column; gap:0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid rgba(13,27,42,0.08);">
+          <span style="font-size:14px; color:var(--navy);">Fortune 500 offers</span>
+          <span style="font-size:20px; font-weight:900; color:var(--red);">856</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid rgba(13,27,42,0.08);">
+          <span style="font-size:14px; color:var(--navy);">Above 10 LPA</span>
+          <span style="font-size:20px; font-weight:900; color:var(--navy);">171 students</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid rgba(13,27,42,0.08);">
+          <span style="font-size:14px; color:var(--navy);">Above 7 LPA</span>
+          <span style="font-size:20px; font-weight:900; color:var(--navy);">332 students</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
+          <span style="font-size:14px; color:var(--navy);">Top 30% average</span>
+          <span style="font-size:20px; font-weight:900; color:var(--navy);">10.7 LPA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="company-logos-grid" style="margin-top:48px;">
+    <div class="company-logo-cell">Microsoft</div>
+    <div class="company-logo-cell">Amazon</div>
+    <div class="company-logo-cell">Deloitte</div>
+    <div class="company-logo-cell">Wipro</div>
+    <div class="company-logo-cell">Capgemini</div>
+    <div class="company-logo-cell">Accenture</div>
+    <div class="company-logo-cell">HPE</div>
+    <div class="company-logo-cell">Flipkart</div>
+    <div class="company-logo-cell">Nestle</div>
+    <div class="company-logo-cell">Zomato</div>
+    <div class="company-logo-cell">PwC</div>
+    <div class="company-logo-cell">TCS</div>
+  </div>
+</section>
+
+<!-- SCHOLARSHIP -->
+<section class="scholarship-section" id="scholarships">
+  <div class="section-label">Scholarships &amp; Fees</div>
+  <h2 class="section-title">Invest smart.<br /><em>Save more.</em></h2>
+
+  <div class="scholarship-grid">
+    <div>
+      <div class="scholarship-table">
+        <div class="sch-row sch-header">
+          <div class="sch-cell">Score / Percentile</div>
+          <div class="sch-cell">Waiver</div>
+          <div class="sch-cell">Savings / yr</div>
+        </div>
+        <div class="sch-row">
+          <div class="sch-cell">95%+ / 95th %ile JEE</div>
+          <div class="sch-cell sch-highlight">20%</div>
+          <div class="sch-cell">~₹35,000</div>
+        </div>
+        <div class="sch-row">
+          <div class="sch-cell">90–94% / 90th %ile</div>
+          <div class="sch-cell sch-highlight">15%</div>
+          <div class="sch-cell">~₹26,250</div>
+        </div>
+        <div class="sch-row">
+          <div class="sch-cell">80–89%</div>
+          <div class="sch-cell sch-highlight">10%</div>
+          <div class="sch-cell">~₹17,500</div>
+        </div>
+        <div class="sch-row">
+          <div class="sch-cell">70–79%</div>
+          <div class="sch-cell sch-highlight">7%</div>
+          <div class="sch-cell">~₹12,250</div>
+        </div>
+        <div class="sch-row">
+          <div class="sch-cell">60–69%</div>
+          <div class="sch-cell sch-highlight">5%</div>
+          <div class="sch-cell">~₹8,750</div>
+        </div>
+      </div>
+      <p class="sch-note">Merit-based · Renewable with CGPA ≥ 8.0 &amp; 75% attendance · Apply by June 30, 2026 · One scholarship at a time</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <div class="fee-card">
+        <div class="section-label" style="margin-bottom:0;">Fee Structure</div>
+        <div class="fee-item">
+          <span class="fee-label">B.Tech (4 years total)</span>
+          <span class="fee-val">₹3.64L – ₹11.1L</span>
+        </div>
+        <div class="fee-item">
+          <span class="fee-label">Starting Fee / year</span>
+          <span class="fee-val">₹1.75L / yr</span>
+        </div>
+        <div class="fee-item">
+          <span class="fee-label">Hostel (per year)</span>
+          <span class="fee-val">₹90K – ₹1.5L</span>
+        </div>
+        <div class="fee-item">
+          <span class="fee-label">Bus (per year)</span>
+          <span class="fee-val">₹50K</span>
+        </div>
+        <div class="fee-item">
+          <span class="fee-label">Application Fee</span>
+          <span class="fee-val">₹1,000</span>
+        </div>
+        <div class="fee-item">
+          <span class="fee-label">Hidden charges</span>
+          <span class="fee-val" style="color:#1a7a4a;">None</span>
+        </div>
+      </div>
+      <a href="#" class="apply-btn" style="align-self:stretch; justify-content:center; text-decoration:none;" id="scholarship-apply">
+        Claim Your Scholarship →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="section-label">For Parents</div>
+  <h2 class="section-title">Honest answers<br /><em>to real questions.</em></h2>
+
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-q">Is placement 100% guaranteed? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">No university can legally guarantee 100% placement. At JECRC, 85–90% of eligible students are placed, with the top 30% averaging 10.7 LPA. Mandatory 6-month internships significantly boost employability.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is JEE mandatory for B.Tech? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">No. Admission is merit-based (Class 12 marks) or entrance-based (JEE Main). A good JEE percentile qualifies you for a higher scholarship bracket.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How safe is the campus for girls? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">JECRC has separate boys and girls hostels with 2,000+ capacity, 24/7 CCTV security, a dedicated medical centre, and contactless food delivery. Located in Sitapura Industrial Area, Jaipur — 25–30 min from city centre.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Are there any hidden charges? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">None. JECRC publishes a full fee schedule including hostel (₹90K–₹1.5L/yr), bus (₹50K/yr), and application fee (₹1,000). B.Tech total fee is ₹3.64L–₹11.1L for 4 years depending on specialization.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can my child transfer to JECRC in 2nd year? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">Yes. JECRC accepts lateral entry for diploma holders (direct 2nd year B.Tech) and migration/transfer from other universities, subject to seat availability.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What popular specializations are trending? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">B.Tech CSE — AI &amp; ML (with IBM / Xebia), B.Tech Cyber Security (EC-Council USA certified), B.Tech Cloud Computing (Microsoft / AWS), and MBA FinTech are the fastest-filling programs. Average packages: 8–16 LPA.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <div class="cta-left">
+    <h2 class="cta-headline">Your unfair advantage<br />starts here.</h2>
+    <p class="cta-sub">Seats for 2026–27 are filling fast. Popular programs like B.Tech AI/ML and MBA FinTech typically close 4–6 weeks before the official deadline. Don't wait.</p>
+  </div>
+  <div class="cta-actions">
+    <a href="#" class="cta-btn-primary" style="text-decoration:none; display:inline-block;" id="cta-apply">
+      Begin Application →
+    </a>
+    <div class="cta-contact">
+      Toll-Free: 1800-120-5616<br />
+      WhatsApp: +91 77280 01234<br />
+      jecrcuniversity.edu.in
+    </div>
+  </div>
+</section>
+
+<!-- NAAC STRIP -->
+<div class="naac-strip">
+  <div class="naac-item">
+    <div class="naac-badge-box">A</div>
+    NAAC Accredited
+  </div>
+  <div class="dot-sep"></div>
+  <div class="naac-item">NBA Accredited</div>
+  <div class="dot-sep"></div>
+  <div class="naac-item">UGC Recognised</div>
+  <div class="dot-sep"></div>
+  <div class="naac-item">AICTE Approved</div>
+  <div class="dot-sep"></div>
+  <div class="naac-item">NIRF Engineering #184</div>
+  <div class="dot-sep"></div>
+  <div class="naac-item">India Today #62 Overall</div>
+  <div class="dot-sep"></div>
+  <div class="naac-item">Est. 1997 · Jaipur</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-bar">
+  <span>© 2026 JECRC University. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="https://jecrcuniversity.edu.in">Privacy</a>
+    <a href="https://jecrcuniversity.edu.in">Terms</a>
+    <a href="https://jecrcuniversity.edu.in/contact-us/">Contact</a>
+    <a href="https://jecrcuniversity.edu.in">www.jecrcuniversity.edu.in</a>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-card">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-title">Applications Open for AY 2026–27</div>
+    <div class="modal-subtitle">Choose the application path that fits you.</div>
+    <div class="form-row" style="margin-bottom: 8px;">
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>UG | PG | Lateral / Migration</label>
+        <a
+          class="apply-btn"
+          href="https://jecrcuapplication.jecrcuniversity.edu.in/application-form"
+          style="justify-content:center; text-decoration:none; width:100%;"
+        >Apply Now!</a>
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>Directorate of Executive Education</label>
+        <a
+          class="apply-btn"
+          href="https://jecrcuapplication.jecrcuniversity.edu.in/directorate-of-executive-education-form"
+          style="justify-content:center; text-decoration:none; width:100%;"
+        >Apply Now!</a>
+      </div>
+    </div>
+    <p class="form-disclaimer">You will be redirected to the official application portal.</p>
+  </div>
+</div>
+
+<div id="tweaks-root"></div>
+
+<script type="text/babel">
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "accentColor": "#C8102E",
+    "bgTone": "cream",
+    "heroLayout": "centered",
+    "showStats": true
+  }/*EDITMODE-END*/;
+
+  function TweaksApp() {
+    const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+    React.useEffect(() => {
+      document.documentElement.style.setProperty('--red', tweaks.accentColor);
+    }, [tweaks.accentColor]);
+
+    React.useEffect(() => {
+      const bg = tweaks.bgTone === 'white' ? '#ffffff'
+        : tweaks.bgTone === 'dark' ? '#0D1B2A'
+        : 'oklch(98% 0.006 60)';
+      const fg = tweaks.bgTone === 'dark' ? '#fff' : '#0D1B2A';
+      document.documentElement.style.setProperty('--cream', bg);
+      document.documentElement.style.setProperty('--navy', tweaks.bgTone === 'dark' ? '#ffffff' : '#0D1B2A');
+      document.body.style.color = fg;
+    }, [tweaks.bgTone]);
+
+    React.useEffect(() => {
+      const stats = document.querySelector('.hero-stats');
+      if (stats) stats.style.display = tweaks.showStats ? 'flex' : 'none';
+    }, [tweaks.showStats]);
+
+    return (
+      <TweaksPanel>
+        <TweakSection title="Brand">
+          <TweakColor
+            label="Accent Color"
+            value={tweaks.accentColor}
+            onChange={v => setTweak('accentColor', v)}
+          />
+          <TweakRadio
+            label="Background"
+            options={['cream', 'white', 'dark']}
+            value={tweaks.bgTone}
+            onChange={v => setTweak('bgTone', v)}
+          />
+        </TweakSection>
+        <TweakSection title="Layout">
+          <TweakToggle
+            label="Show Statistics"
+            value={tweaks.showStats}
+            onChange={v => setTweak('showStats', v)}
+          />
+        </TweakSection>
+      </TweaksPanel>
+    );
+  }
+
+  const tweaksRoot = ReactDOM.createRoot(document.getElementById('tweaks-root'));
+  tweaksRoot.render(<TweaksApp />);
+</script>
+
+<script>
+  // Ticker
+  const tickerItems = [
+    '34,000 Alumni', '35 Countries', '1 Common Start',
+    'Engineering', 'Design', 'Law', 'Business Studies',
+    'NAAC Accredited', 'Build Your World', 'Admissions Open 2026–27',
+    'Jaipur, Rajasthan', 'Computer Applications', 'Hospitality',
+  ];
+
+  const inner = document.getElementById('ticker-inner');
+  const repeated = [...tickerItems, ...tickerItems];
+  repeated.forEach(item => {
+    const el = document.createElement('span');
+    el.className = 'ticker-item';
+    el.innerHTML = `<span>✦</span>${item}`;
+    inner.appendChild(el);
+  });
+
+  // Modal
+  const overlay = document.getElementById('modal-overlay');
+  const openModal = () => overlay.classList.add('open');
+  const closeModal = () => overlay.classList.remove('open');
+
+  const applyButtons = [
+    'nav-apply',
+    'hero-apply',
+    'courses-apply',
+    'scholarship-apply',
+    'cta-apply'
+  ];
+
+  applyButtons.forEach((id) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+
+  // FAQ toggles
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.course-card, .why-item, .placement-stat-cell, .company-logo-cell, .big-stat-block, .why-stat-cell');
+  revealEls.forEach(el => el.classList.add('reveal'));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), 60 * (Array.from(revealEls).indexOf(entry.target) % 6));
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  revealEls.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
